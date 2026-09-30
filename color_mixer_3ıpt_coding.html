@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Mixer - 3. Sınıf Renk Laboratuvarı</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            kidBg: '#0f172a',
+            kidCard: '#1e293b',
+            kidBorder: '#334155'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Font Awesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .font-fun {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+    
+    /* Kid-friendly custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #3b82f6;
+      border-radius: 5px;
+    }
+
+    /* Print Stylesheet */
+    @media print {
+      body {
+        background-color: white !important;
+        color: black !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-page {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+      }
+      .worksheet-card {
+        border: 1px solid #ccc !important;
+        background: #fff !important;
+        color: #000 !important;
+        break-inside: avoid;
+      }
+      input, textarea, select {
+        border: 1px solid #999 !important;
+        background: #fff !important;
+        color: #000 !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-[#0f172a] text-slate-100 min-h-screen antialiased flex flex-col selection:bg-amber-400 selection:text-slate-900">
+
+  <!-- Top Kid Header -->
+  <header class="no-print border-b border-slate-800 bg-[#1e293b]/90 backdrop-blur sticky top-0 z-50 px-4 py-3 shadow-lg">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <button id="resetAppBtn" title="Laboratuvarı Temizle ve Baştan Başla" class="px-3 py-2 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white font-bold transition flex items-center gap-1.5 text-xs">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>Sıfırla</span>
+        </button>
+        <div>
+          <h1 class="text-lg sm:text-xl font-bold font-fun tracking-wide text-white flex items-center gap-2">
+            <span class="text-amber-400 text-2xl">🧪</span>
+            <span>COLOR MIXER</span>
+            <span class="text-xs font-sans bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-semibold">3. Sınıf IPT-CODING</span>
+          </h1>
+          <p class="text-xs text-slate-400 hidden sm:block">Renk Tarifimi Değiştiriyorum • 3. Sınıf IPT-CODING</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <button id="toggleTabBtn" class="px-3 py-2 text-xs font-bold rounded-xl bg-slate-800 text-amber-300 border border-slate-700 hover:bg-slate-700 transition lg:hidden flex items-center gap-1.5">
+          <i class="fa-solid fa-arrows-left-right"></i> <span id="tabToggleText">Çalışma Sayfama Git 📝</span>
+        </button>
+        <button id="printBtn" onclick="window.print()" class="px-4 py-2 text-xs font-bold rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:opacity-90 transition shadow-lg shadow-blue-500/20 flex items-center gap-2">
+          <i class="fa-solid fa-print text-sm"></i> <span>Yazdır / PDF İndir</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto w-full p-3 sm:p-5 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- LEFT PANEL: COLOR MIXER DIGITAL STUDIO (5 Cols on LG) -->
+    <section id="mixerStudioPanel" class="lg:col-span-5 flex flex-col gap-4">
+      <div class="bg-[#1e293b] border-2 border-slate-700 rounded-3xl p-4 sm:p-5 shadow-2xl flex flex-col gap-4">
+        
+        <!-- Header & Lab Badge -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-700">
+          <div class="flex items-center gap-2">
+            <div class="w-9 h-9 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
+              🎨
+            </div>
+            <div>
+              <h2 class="text-base sm:text-lg font-bold font-fun text-white">Renk Karıştırma Kutusu</h2>
+              <p class="text-[11px] text-slate-400">Damlat, karıştır ve oluşan yeni rengi gör!</p>
+            </div>
+          </div>
+          <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">
+            🎨 Boya Modu
+          </span>
+        </div>
+
+        <!-- Result Box & Color Info Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+          
+          <!-- Big Color Display Flask Square -->
+          <div class="sm:col-span-6 flex flex-col items-center">
+            <div id="mixedColorBox" class="w-full h-44 rounded-2xl shadow-2xl border-4 border-slate-700 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center p-3 text-center group" style="background-color: #000000;">
+              <div class="w-12 h-12 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-2xl mb-1 shadow-inner">
+                🧪
+              </div>
+              <span id="mixedColorLabel" class="text-xs sm:text-sm font-bold font-fun px-3 py-1 rounded-xl bg-black/70 text-white backdrop-blur border border-white/10 shadow-lg">
+                Henüz Renk Yok (Siyah)
+              </span>
+            </div>
+          </div>
+
+          <!-- Color Codes & Quick Kid Actions -->
+          <div class="sm:col-span-6 flex flex-col justify-between space-y-3">
+            <div class="space-y-1.5 text-xs bg-[#0f172a] p-3 rounded-2xl border border-slate-700">
+              <div class="flex justify-between items-center text-slate-300">
+                <span class="text-slate-400 text-[11px]">Renk Kodu (HEX):</span>
+                <span id="hexCodeText" class="font-mono font-bold text-emerald-400">#000000</span>
+              </div>
+              <div class="flex justify-between items-center text-slate-300">
+                <span class="text-slate-400 text-[11px]">Işık Oranı (RGB):</span>
+                <span id="rgbCodeText" class="font-mono font-bold text-sky-400">0 0 0</span>
+              </div>
+            </div>
+
+            <!-- Fun Action Buttons -->
+            <div class="grid grid-cols-3 gap-2">
+              <button id="clearMixerBtn" title="Sıfırla" class="py-2.5 px-2 rounded-xl bg-red-600/80 hover:bg-red-500 text-white font-bold transition flex flex-col items-center justify-center text-[10px] gap-1 shadow">
+                <i class="fa-solid fa-rotate-right text-sm"></i>
+                <span>Temizle</span>
+              </button>
+              <button id="playSoundBtn" title="Sesi Çal" class="py-2.5 px-2 rounded-xl bg-amber-500/80 hover:bg-amber-400 text-white font-bold transition flex flex-col items-center justify-center text-[10px] gap-1 shadow">
+                <i class="fa-solid fa-music text-sm"></i>
+                <span>Sesi Çal</span>
+              </button>
+              <button id="accessibilityBtn" title="Sesli Okunuş" class="py-2.5 px-2 rounded-xl bg-indigo-600/80 hover:bg-indigo-500 text-white font-bold transition flex flex-col items-center justify-center text-[10px] gap-1 shadow">
+                <i class="fa-solid fa-volume-high text-sm"></i>
+                <span>Oku 🔊</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Color Cards Grid -->
+        <div class="mt-1 space-y-2">
+          <div class="flex justify-between items-center text-xs text-slate-300 px-1 font-semibold">
+            <span>💧 Renk Tüpleri (Damla Sayıları):</span>
+            <span id="totalDropsText" class="text-amber-400 font-bold bg-amber-400/10 px-2 py-0.5 rounded-lg border border-amber-400/20">Toplam: 0 Damla</span>
+          </div>
+
+          <!-- Color Cards Grid -->
+          <div id="colorCardsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <!-- Dynamic cards generated via JavaScript -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: WORKSHEET ACTIVITY (7 Cols on LG) -->
+    <section id="worksheetPanel" class="lg:col-span-7 flex flex-col gap-5">
+      
+      <div class="worksheet-card bg-[#1e293b] border-2 border-slate-700 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-6">
+        
+        <!-- Worksheet Title & Student Profile -->
+        <div class="border-b border-slate-700 pb-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-extrabold uppercase tracking-widest text-amber-300 bg-amber-500/20 border border-amber-500/40 px-2.5 py-0.5 rounded-full">
+                  3. SINIF IPT-CODING
+                </span>
+                <span class="text-xs text-slate-400">Kodlama Etkinliği</span>
+              </div>
+              <h2 class="text-2xl sm:text-3xl font-bold font-fun text-white tracking-wide mt-1">
+                RENK TARİFİMİ DEĞİŞTİRİYORUM
+              </h2>
+              <p class="text-xs text-slate-400">Color Mixer ile Kodlama Deneyi Yapıyorum, Sonuçları Yazıyorum</p>
+            </div>
+            
+            <div class="w-full sm:w-60 bg-[#0f172a] p-3 rounded-2xl border border-slate-700 shadow-inner">
+              <label class="block text-xs font-bold text-amber-400 mb-1 flex items-center gap-1">
+                <i class="fa-solid fa-user-pen"></i> Adım Soyadım:
+              </label>
+              <input type="text" id="studentNameInput" placeholder="Adını ve Soyadını yaz..." 
+                     class="w-full bg-[#1e293b] text-xs font-semibold text-white px-3 py-2 rounded-xl border border-slate-600 focus:outline-none focus:border-amber-400">
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. Tahmin Et, Dene ve Kaydet -->
+        <div class="space-y-3.5">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold font-fun text-base shadow-md">
+              1
+            </div>
+            <div>
+              <h3 class="text-base font-bold font-fun text-white">Tahmin Et, Dene ve Kaydet 🧪</h3>
+              <p class="text-[11px] text-slate-400">Önce renk tahminini yaz. Sonra **Laboratuvarda Dene** butonuna bas!</p>
+            </div>
+          </div>
+          
+          <div class="bg-amber-500/10 border border-amber-500/30 p-2.5 rounded-2xl text-xs text-amber-200 flex items-center gap-2">
+            <span class="text-lg">💡</span>
+            <span><strong>Kodlama İpucu:</strong> Her yeni tarifte karıştırıcıyı temizlemeyi unutma!</span>
+          </div>
+
+          <!-- Step 1 Recipes Cards/Table -->
+          <div class="space-y-3">
+            
+            <!-- Recipe 1: Red + Yellow -->
+            <div class="bg-[#0f172a] border border-slate-700 rounded-2xl p-3.5 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
+                <div class="flex items-center gap-2">
+                  <span class="w-3.5 h-3.5 rounded-full bg-red-500 inline-block shadow"></span>
+                  <span class="text-slate-400 text-xs">+</span>
+                  <span class="w-3.5 h-3.5 rounded-full bg-yellow-400 inline-block shadow"></span>
+                  <span class="font-bold text-white text-xs sm:text-sm">1 kırmızı + 1 sarı</span>
+                </div>
+                <button type="button" class="applyRecipeBtn bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow" data-red="1" data-yellow="1">
+                  <span>🧪 Lab'da Dene!</span>
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1">💭 Tahmin Ettiğim Renk:</label>
+                  <input type="text" id="guess_1" placeholder="Örn: Turuncu" class="w-full bg-[#1e293b] text-xs text-slate-100 px-3 py-2 rounded-xl border border-slate-700 focus:outline-none focus:border-blue-400">
+                </div>
+                <div>
+                  <div class="flex justify-between items-center mb-1">
+                    <label class="block text-[11px] font-semibold text-slate-400">✨ Gördüğüm Renk:</label>
+                    <button type="button" class="captureResultBtn text-[10px] font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1" data-target="observed_1" data-swatch="swatch_1">
+                      <i class="fa-solid fa-file-import"></i> Sonucu Aktar
+                    </button>
+                  </div>
+                  <div class="flex gap-2 items-center">
+                    <div id="swatch_1" class="w-8 h-8 rounded-xl border border-slate-600 bg-slate-800 shrink-0 shadow-inner"></div>
+                    <input type="text" id="observed_1" placeholder="Lab sonucunu aktar..." class="w-full bg-[#1e293b] text-xs text-slate-100 px-3 py-2 rounded-xl border border-slate-700 focus:outline-none focus:border-emerald-400">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recipe 2: Blue + Yellow -->
+            <div class="bg-[#0f172a] border border-slate-700 rounded-2xl p-3.5 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
+                <div class="flex items-center gap-2">
+                  <span class="w-3.5 h-3.5 rounded-full bg-blue-600 inline-block shadow"></span>
+                  <span class="text-slate-400 text-xs">+</span>
+                  <span class="w-3.5 h-3.5 rounded-full bg-yellow-400 inline-block shadow"></span>
+                  <span class="font-bold text-white text-xs sm:text-sm">1 mavi + 1 sarı</span>
+                </div>
+                <button type="button" class="applyRecipeBtn bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow" data-blue="1" data-yellow="1">
+                  <span>🧪 Lab'da Dene!</span>
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1">💭 Tahmin Ettiğim Renk:</label>
+                  <input type="text" id="guess_2" placeholder="Örn: Yeşil" class="w-full bg-[#1e293b] text-xs text-slate-100 px-3 py-2 rounded-xl border border-slate-700 focus:outline-none focus:border-blue-400">
+                </div>
+                <div>
+                  <div class="flex justify-between items-center mb-1">
+                    <label class="block text-[11px] font-semibold text-slate-400">✨ Gördüğüm Renk:</label>
+                    <button type="button" class="captureResultBtn text-[10px] font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1" data-target="observed_2" data-swatch="swatch_2">
+                      <i class="fa-solid fa-file-import"></i> Sonucu Aktar
+                    </button>
+                  </div>
+                  <div class="flex gap-2 items-center">
+                    <div id="swatch_2" class="w-8 h-8 rounded-xl border border-slate-600 bg-slate-800 shrink-0 shadow-inner"></div>
+                    <input type="text" id="observed_2" placeholder="Lab sonucunu aktar..." class="w-full bg-[#1e293b] text-xs text-slate-100 px-3 py-2 rounded-xl border border-slate-700 focus:outline-none focus:border-emerald-400">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recipe 3: Blue + Green -->
+            <div class="bg-[#0f172a] border border-slate-700 rounded-2xl p-3.5 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
+                <div class="flex items-center gap-2">
+                  <span class="w-3.5 h-3.5 rounded-full bg-blue-600 inline-block shadow"></span>
+                  <span class="text-slate-400 text-xs">+</span>
+                  <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 inline-block shadow"></span>
+                  <span class="font-bold text-white text-xs sm:text-sm">1 mavi + 1 yeşil</span>
+                </div>
+                <button type="button" class="applyRecipeBtn bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow" data-blue="1" data-green="1">
+                  <span>🧪 Lab'da Dene!</span>
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1">💭 Tahmin Ettiğim Renk:</label>
+                  <input type="text" id="guess_3" placeholder="Örn: Turkuaz / Su Yeşili" class="w-full bg-[#1e293b] text-xs text-slate-100 px-3 py-2 rounded-xl border border-slate-700 focus:outline-none focus:border-blue-400">
+                </div>
+                <div>
+                  <div class="flex justify-between items-center mb-1">
+                    <label class="block text-[11px] font-semibold text-slate-400">✨ Gördüğüm Renk:</label>
+                    <button type="button" class="captureResultBtn text-[10px] font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1" data-target="observed_3" data-swatch="swatch_3">
+                      <i class="fa-solid fa-file-import"></i> Sonucu Aktar
+                    </button>
+                  </div>
+                  <div class="flex gap-2 items-center">
+                    <div id="swatch_3" class="w-8 h-8 rounded-xl border border-slate-600 bg-slate-800 shrink-0 shadow-inner"></div>
+                    <input type="text" id="observed_3" placeholder="Lab sonucunu aktar..." class="w-full bg-[#1e293b] text-xs text-slate-100 px-3 py-2 rounded-xl border border-slate-700 focus:outline-none focus:border-emerald-400">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 2. Sonuçları Karşılaştır -->
+        <div class="space-y-3 pt-3 border-t border-slate-700">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold font-fun text-base shadow-md">
+              2
+            </div>
+            <h3 class="text-base font-bold font-fun text-white">Sonuçları Karşılaştır 🤔</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="bg-[#0f172a] p-3.5 rounded-2xl border border-slate-700 space-y-2">
+              <label class="block text-xs font-bold text-slate-200">
+                🔵 + 🟡 Mavi ile Sarı karıştığında hangi renk oluştu?
+              </label>
+              <select id="compareBlueYellow" class="w-full bg-[#1e293b] text-xs font-semibold text-slate-100 px-3 py-2 rounded-xl border border-slate-600 focus:outline-none focus:border-purple-400">
+                <option value="">Doğru rengi seç...</option>
+                <option value="Yeşil">Yeşil</option>
+                <option value="Mor">Mor</option>
+                <option value="Turuncu">Turuncu</option>
+              </select>
+            </div>
+
+            <div class="bg-[#0f172a] p-3.5 rounded-2xl border border-slate-700 space-y-2">
+              <label class="block text-xs font-bold text-slate-200">
+                🔵 + 🟢 Mavi ile Yeşil karıştığında nasıl bir ton elde ettin?
+              </label>
+              <select id="compareBlueGreen" class="w-full bg-[#1e293b] text-xs font-semibold text-slate-100 px-3 py-2 rounded-xl border border-slate-600 focus:outline-none focus:border-purple-400">
+                <option value="">Doğru tonu seç...</option>
+                <option value="Turkuaz / Mavi-Yeşil">Turkuaz / Mavi-Yeşil</option>
+                <option value="Sarı">Sarı</option>
+                <option value="Siyah">Siyah</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Kanıtım -->
+        <div class="space-y-3 pt-3 border-t border-slate-700">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold font-fun text-base shadow-md">
+              3
+            </div>
+            <h3 class="text-base font-bold font-fun text-white">Kodlama Kanıtım 📝</h3>
+          </div>
+
+          <div class="bg-[#0f172a] p-3.5 rounded-2xl border border-slate-700 space-y-2">
+            <label class="block text-xs font-bold text-slate-200">
+              Mavinin yanına yeşil veya sarı eklediğimde ne değişti? Cümleni tamamla:
+            </label>
+            <textarea id="evidenceInput" rows="2" placeholder="Farklı renk miktarını veya çeşidini değiştirdiğimde oluşan yeni renk..." 
+                      class="w-full bg-[#1e293b] text-xs text-slate-100 p-3 rounded-xl border border-slate-600 focus:outline-none focus:border-emerald-400"></textarea>
+          </div>
+        </div>
+
+        <!-- 4. Kendi Renk Tarifini Oluştur -->
+        <div class="space-y-3 pt-3 border-t border-slate-700">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-xl bg-amber-500 text-slate-900 flex items-center justify-center font-bold font-fun text-base shadow-md">
+                4
+              </div>
+              <h3 class="text-base font-bold font-fun text-white">Kendi Özel Tarifini Oluştur 🌈</h3>
+            </div>
+          </div>
+
+          <div class="bg-[#0f172a] p-4 rounded-2xl border border-slate-700 space-y-4">
+            
+            <!-- Kid Custom Selector -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <!-- Color 1 -->
+              <div class="p-3 bg-[#1e293b] rounded-xl border border-slate-700 space-y-2">
+                <span class="text-xs font-bold text-amber-300">1. Rengini Seç:</span>
+                <div class="flex gap-2">
+                  <select id="customColor1" class="flex-1 bg-[#0f172a] text-xs font-bold text-white p-2 rounded-lg border border-slate-600">
+                    <option value="Kırmızı" data-hex="#FF0000">🔴 Kırmızı</option>
+                    <option value="Sarı" data-hex="#FFFF00">🟡 Sarı</option>
+                    <option value="Mavi" data-hex="#0000FF">🔵 Mavi</option>
+                    <option value="Yeşil" data-hex="#008000">🟢 Yeşil</option>
+                    <option value="Pembe" data-hex="#FF69B4">🩷 Pembe</option>
+                    <option value="Mor" data-hex="#800080">🟣 Mor</option>
+                  </select>
+                  <input type="number" id="customAmount1" value="1" min="1" max="5" class="w-14 bg-[#0f172a] text-xs font-bold text-center text-amber-400 p-2 rounded-lg border border-slate-600">
+                  <span class="text-xs text-slate-400 self-center font-bold">damla</span>
+                </div>
+              </div>
+
+              <!-- Color 2 -->
+              <div class="p-3 bg-[#1e293b] rounded-xl border border-slate-700 space-y-2">
+                <span class="text-xs font-bold text-amber-300">2. Rengini Seç:</span>
+                <div class="flex gap-2">
+                  <select id="customColor2" class="flex-1 bg-[#0f172a] text-xs font-bold text-white p-2 rounded-lg border border-slate-600">
+                    <option value="Mavi" data-hex="#0000FF">🔵 Mavi</option>
+                    <option value="Sarı" data-hex="#FFFF00">🟡 Sarı</option>
+                    <option value="Kırmızı" data-hex="#FF0000">🔴 Kırmızı</option>
+                    <option value="Yeşil" data-hex="#008000">🟢 Yeşil</option>
+                    <option value="Pembe" data-hex="#FF69B4">🩷 Pembe</option>
+                    <option value="Mor" data-hex="#800080">🟣 Mor</option>
+                  </select>
+                  <input type="number" id="customAmount2" value="2" min="1" max="5" class="w-14 bg-[#0f172a] text-xs font-bold text-center text-amber-400 p-2 rounded-lg border border-slate-600">
+                  <span class="text-xs text-slate-400 self-center font-bold">damla</span>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" id="testCustomRecipeBtn" class="w-full py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-900 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-lg">
+              <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+              <span>Kendi Tarifimi Mix'le ve Sonucu Göster!</span>
+            </button>
+
+            <!-- Text Outputs -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-300 mb-1">✨ Tarifim:</label>
+                <input type="text" id="myRecipeText" placeholder="Örn: 1 Mavi + 2 Sarı" class="w-full bg-[#1e293b] text-xs text-slate-100 p-2.5 rounded-xl border border-slate-600">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-300 mb-1">🎨 Oluşan Renk:</label>
+                <div class="flex gap-2 items-center">
+                  <div id="customSwatch" class="w-8 h-8 rounded-xl border border-slate-600 bg-slate-800 shrink-0 shadow-inner"></div>
+                  <input type="text" id="myResultText" placeholder="Örn: Yeşil" class="w-full bg-[#1e293b] text-xs text-slate-100 p-2.5 rounded-xl border border-slate-600">
+                </div>
+              </div>
+            </div>
+
+            <!-- Friend Observation -->
+            <div>
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">
+                👥 Tarifini sıra arkadaşına ver! Arkadaşının gözlemi:
+              </label>
+              <textarea id="friendObservationInput" rows="2" placeholder="Arkadaşım aynı miktarda karıştırınca..." 
+                        class="w-full bg-[#1e293b] text-xs text-slate-100 p-2.5 rounded-xl border border-slate-600 focus:outline-none focus:border-amber-400"></textarea>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-700 text-center text-[11px] text-slate-400">
+          <p>🌟 Harika İş! Kutuları doldurduktan sonra <strong>Yazdır / PDF İndir</strong> butonuna basabilirsin.</p>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    let palette = [
+      { id: 'red', name: 'Kırmızı', hex: '#FF0000', count: 0 },
+      { id: 'orange', name: 'Turuncu', hex: '#FFA500', count: 0 },
+      { id: 'yellow', name: 'Sarı', hex: '#FFFF00', count: 0 },
+      { id: 'green', name: 'Yeşil', hex: '#008000', count: 0 },
+      { id: 'blue', name: 'Mavi', hex: '#0000FF', count: 0 },
+      { id: 'purple', name: 'Mor', hex: '#800080', count: 0 },
+      { id: 'pink', name: 'Pembe', hex: '#FF69B4', count: 0 }
+    ];
+
+    const defaultPaletteBackup = JSON.parse(JSON.stringify(palette));
+
+    // DOM Elements
+    const colorCardsGrid = document.getElementById('colorCardsGrid');
+    const mixedColorBox = document.getElementById('mixedColorBox');
+    const mixedColorLabel = document.getElementById('mixedColorLabel');
+    const hexCodeText = document.getElementById('hexCodeText');
+    const rgbCodeText = document.getElementById('rgbCodeText');
+    const totalDropsText = document.getElementById('totalDropsText');
+
+    function hexToRgb(hex) {
+      let c = hex.replace('#', '');
+      if (c.length === 3) c = c.split('').map(x => x + x).join('');
+      const num = parseInt(c, 16);
+      return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+    }
+
+    function rgbToHex(r, g, b) {
+      return '#' + [r, g, b].map(x => {
+        const hex = Math.max(0, Math.min(255, Math.round(x))).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+      }).join('').toUpperCase();
+    }
+
+    function rgbToHsl(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      let h, s, l = (max + min) / 2;
+
+      if (max === min) {
+        h = s = 0;
+      } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+      }
+      return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+    }
+
+    function calculateSubtractiveMix(activeColors) {
+      let totalCount = 0;
+      let totalC = 0, totalM = 0, totalY = 0;
+
+      activeColors.forEach(item => {
+        const rgb = hexToRgb(item.hex);
+        const c = 1 - (rgb.r / 255);
+        const m = 1 - (rgb.g / 255);
+        const y = 1 - (rgb.b / 255);
+
+        totalC += c * item.count;
+        totalM += m * item.count;
+        totalY += y * item.count;
+        totalCount += item.count;
+      });
+
+      if (totalCount === 0) return { r: 0, g: 0, b: 0, total: 0 };
+
+      const avgC = totalC / totalCount;
+      const avgM = totalM / totalCount;
+      const avgY = totalY / totalCount;
+
+      const r = Math.round((1 - avgC) * 255);
+      const g = Math.round((1 - avgM) * 255);
+      const b = Math.round((1 - avgY) * 255);
+
+      return { r, g, b, total: totalCount };
+    }
+
+    function getTurkishColorName(r, g, b, totalCount) {
+      if (totalCount === 0) return "Karışım Yok (Siyah)";
+
+      const hsl = rgbToHsl(r, g, b);
+      const h = hsl.h;
+      const s = hsl.s;
+      const l = hsl.l;
+
+      if (l < 12) return "Çok Koyu Renk";
+      if (l > 90 && s < 10) return "Açık Beyazımsı";
+
+      if (s < 15) return "Gri Tonu";
+
+      if (h >= 345 || h < 15) {
+        if (l < 35) return "Koyu Kırmızı / Bordo";
+        if (l > 70) return "Açık Pembe";
+        return "Kırmızı";
+      } else if (h >= 15 && h < 45) {
+        if (h < 25) return "Kırmızımsı Turuncu";
+        if (h > 35) return "Sarımsı Turuncu";
+        return "Turuncu";
+      } else if (h >= 45 && h < 70) {
+        if (l < 40) return "Koyu Sarı / Zeytin";
+        if (l > 75) return "Açık Sarı";
+        return "Sarı";
+      } else if (h >= 70 && h < 165) {
+        if (h < 95) return "Fıstık Yeşili";
+        if (l < 35) return "Koyu Yeşil";
+        return "Yeşil";
+      } else if (h >= 165 && h < 260) {
+        if (h < 195) return "Açık Mavi / Turkuaz";
+        if (l < 35) return "Lacivert";
+        return "Mavi";
+      } else if (h >= 260 && h < 315) {
+        return "Mor";
+      } else {
+        return "Pembe";
+      }
+    }
+
+    function renderColorCards() {
+      colorCardsGrid.innerHTML = '';
+
+      palette.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = "bg-[#0f172a] border border-slate-700 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between";
+
+        card.innerHTML = `
+          <div class="h-16 w-full relative transition-all flex items-start justify-between p-1.5" style="background-color: ${item.hex};">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-black/60 text-white backdrop-blur">
+              ${item.name}
+            </span>
+          </div>
+
+          <div class="px-2 py-1 bg-[#1e293b] flex items-center justify-between text-xs text-slate-300">
+            <span class="text-[11px] font-bold text-slate-400">Damla:</span>
+            <span class="font-bold text-amber-400 font-fun text-sm">${item.count}</span>
+          </div>
+
+          <div class="grid grid-cols-2 divide-x divide-slate-700 bg-[#1e293b] border-t border-slate-700">
+            <button onclick="updateCount(${index}, -1)" class="py-2 hover:bg-slate-700 text-slate-200 font-bold transition flex justify-center items-center text-xs">
+              <i class="fa-solid fa-minus"></i>
+            </button>
+            <button onclick="updateCount(${index}, 1)" class="py-2 hover:bg-slate-700 text-slate-200 font-bold transition flex justify-center items-center text-xs">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        `;
+
+        colorCardsGrid.appendChild(card);
+      });
+
+      updateMixerResult();
+    }
+
+    function updateCount(index, delta) {
+      palette[index].count = Math.max(0, palette[index].count + delta);
+      renderColorCards();
+      playClickSound();
+    }
+
+    function updateMixerResult() {
+      const activeColors = palette.filter(item => item.count > 0);
+      let mix = calculateSubtractiveMix(activeColors);
+
+      const hex = rgbToHex(mix.r, mix.g, mix.b);
+      const turkishName = getTurkishColorName(mix.r, mix.g, mix.b, mix.total);
+
+      mixedColorBox.style.backgroundColor = hex;
+      mixedColorLabel.textContent = turkishName;
+      
+      hexCodeText.textContent = hex;
+      rgbCodeText.textContent = `${mix.r} ${mix.g} ${mix.b}`;
+
+      totalDropsText.textContent = `Toplam: ${mix.total} Damla`;
+    }
+
+    document.querySelectorAll('.applyRecipeBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Reset count for all palette items
+        palette.forEach(p => p.count = 0);
+
+        // Read any dataset attributes attached to button
+        const colorKeys = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink'];
+        colorKeys.forEach(key => {
+          const amount = parseInt(btn.getAttribute(`data-${key}`) || '0');
+          if (amount > 0) {
+            const item = palette.find(p => p.id === key);
+            if (item) item.count = amount;
+          }
+        });
+
+        renderColorCards();
+        playSuccessSound();
+
+        // Scroll to mixer preview on smaller devices
+        if (window.innerWidth < 1024) {
+          document.getElementById('mixerStudioPanel').scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    document.querySelectorAll('.captureResultBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetInputId = btn.getAttribute('data-target');
+        const targetSwatchId = btn.getAttribute('data-swatch');
+
+        const activeColors = palette.filter(item => item.count > 0);
+        let mix = calculateSubtractiveMix(activeColors);
+        const hex = rgbToHex(mix.r, mix.g, mix.b);
+        const turkishName = getTurkishColorName(mix.r, mix.g, mix.b, mix.total);
+
+        if (targetInputId) {
+          document.getElementById(targetInputId).value = `${turkishName} (${hex})`;
+        }
+        if (targetSwatchId) {
+          document.getElementById(targetSwatchId).style.backgroundColor = hex;
+        }
+
+        playSuccessSound();
+      });
+    });
+
+    document.getElementById('testCustomRecipeBtn').addEventListener('click', () => {
+      const c1 = document.getElementById('customColor1').value;
+      const a1 = parseInt(document.getElementById('customAmount1').value || '1');
+      const c2 = document.getElementById('customColor2').value;
+      const a2 = parseInt(document.getElementById('customAmount2').value || '1');
+
+      document.getElementById('myRecipeText').value = `${a1} ${c1} + ${a2} ${c2}`;
+
+      const select1 = document.getElementById('customColor1');
+      const hex1 = select1.options[select1.selectedIndex].getAttribute('data-hex') || '#FF0000';
+
+      const select2 = document.getElementById('customColor2');
+      const hex2 = select2.options[select2.selectedIndex].getAttribute('data-hex') || '#0000FF';
+
+      palette.forEach(p => p.count = 0);
+
+      let card1 = palette.find(p => p.hex.toUpperCase() === hex1.toUpperCase());
+      if (card1) card1.count = a1;
+
+      let card2 = palette.find(p => p.hex.toUpperCase() === hex2.toUpperCase() && p !== card1);
+      if (card2) card2.count = a2;
+
+      renderColorCards();
+
+      const activeColors = palette.filter(item => item.count > 0);
+      let mix = calculateSubtractiveMix(activeColors);
+      const hex = rgbToHex(mix.r, mix.g, mix.b);
+      const turkishName = getTurkishColorName(mix.r, mix.g, mix.b, mix.total);
+
+      document.getElementById('myResultText').value = `${turkishName}`;
+      document.getElementById('customSwatch').style.backgroundColor = hex;
+
+      playSuccessSound();
+    });
+
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playClickSound() {
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 520;
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
+      } catch (e) {}
+    }
+
+    function playSuccessSound() {
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.22);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.22);
+      } catch (e) {}
+    }
+
+    document.getElementById('playSoundBtn').addEventListener('click', () => {
+      try {
+        initAudio();
+        const activeColors = palette.filter(item => item.count > 0);
+        let mix = calculateSubtractiveMix(activeColors);
+        const hsl = rgbToHsl(mix.r, mix.g, mix.b);
+
+        const freq = 260 + (hsl.h / 360) * 350;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+      } catch(e){}
+    });
+
+    document.getElementById('clearMixerBtn').addEventListener('click', () => {
+      palette.forEach(item => item.count = 0);
+      renderColorCards();
+      playClickSound();
+    });
+
+    document.getElementById('accessibilityBtn').addEventListener('click', () => {
+      const activeColors = palette.filter(item => item.count > 0);
+      let mix = calculateSubtractiveMix(activeColors);
+      const turkishName = getTurkishColorName(mix.r, mix.g, mix.b, mix.total);
+      
+      const message = `Oluşan renk: ${turkishName}. Toplam ${mix.total} damla karıştırıldı.`;
+
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.lang = 'tr-TR';
+        window.speechSynthesis.speak(utterance);
+      }
+    });
+
+    document.getElementById('resetAppBtn').addEventListener('click', () => {
+      palette = JSON.parse(JSON.stringify(defaultPaletteBackup));
+      renderColorCards();
+      document.querySelectorAll('input[type="text"], textarea').forEach(i => i.value = '');
+      document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+      document.querySelectorAll('[id^="swatch_"], #customSwatch').forEach(s => s.style.backgroundColor = '#1e293b');
+    });
+
+    /* Mobile view toggle */
+    let activeMobileTab = 'mixer';
+    document.getElementById('toggleTabBtn').addEventListener('click', () => {
+      const mixerPanel = document.getElementById('mixerStudioPanel');
+      const worksheetPanel = document.getElementById('worksheetPanel');
+      const toggleText = document.getElementById('tabToggleText');
+
+      if (activeMobileTab === 'mixer') {
+        mixerPanel.classList.add('hidden');
+        worksheetPanel.classList.remove('hidden');
+        activeMobileTab = 'worksheet';
+        toggleText.textContent = "Laboratuvara Dön 🧪";
+      } else {
+        worksheetPanel.classList.add('hidden');
+        mixerPanel.classList.remove('hidden');
+        activeMobileTab = 'mixer';
+        toggleText.textContent = "Çalışma Sayfama Git 📝";
+      }
+    });
+
+    window.onload = function() {
+      renderColorCards();
+    };
+  </script>
+</body>
+</html>
